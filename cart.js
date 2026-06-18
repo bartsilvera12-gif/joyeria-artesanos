@@ -271,20 +271,48 @@
     save(cart);
     renderAll();
   }
+  // Picker context: 'cart' (order from cart), 'inquiry' (generic), 'product' (specific item)
+  let pickerMode = 'inquiry';
+  let pickerProduct = null;
+
   function checkout(){
     if(!cart.length) return;
-    openLocalPicker();
+    pickerMode = 'cart';
+    pickerProduct = null;
+    openLocalPicker('Elegí tu local', '¿A qué sucursal enviamos tu pedido?');
+  }
+  function startInquiry(){
+    pickerMode = 'inquiry';
+    pickerProduct = null;
+    openLocalPicker('Elegí tu local', '¿Con qué sucursal querés contactarte?');
+  }
+  function startProductInquiry(p){
+    pickerMode = 'product';
+    pickerProduct = p;
+    openLocalPicker('Elegí tu local', '¿A qué sucursal querés consultar esta pieza?');
   }
   function sendOrderToLocal(localKey){
-    const lines = cart.map(it => `• ${it.name} (${it.material}) x${it.qty} — ₲ ${fmt(it.price*it.qty)}`).join('\n');
-    const total = '₲ ' + fmt(totalAmount()) + ' PYG';
     const phone = localKey === 'sl' ? WA_SAN_LORENZO : WA_MULTIPLAZA;
     const localName = localKey === 'sl' ? 'San Lorenzo' : 'Multiplaza';
-    const msg = `Hola Joyería Artesanos (local ${localName}), quiero hacer un pedido:\n\n${lines}\n\nTotal: ${total}`;
+    let msg;
+    if(pickerMode === 'cart'){
+      const lines = cart.map(it => `• ${it.name} (${it.material}) x${it.qty} — ₲ ${fmt(it.price*it.qty)}`).join('\n');
+      const total = '₲ ' + fmt(totalAmount()) + ' PYG';
+      msg = `Hola Joyería Artesanos (local ${localName}), quiero hacer un pedido:\n\n${lines}\n\nTotal: ${total}`;
+    } else if(pickerMode === 'product' && pickerProduct){
+      const p = pickerProduct;
+      msg = `Hola Joyería Artesanos (local ${localName}), quisiera consultar por "${p.name}" (${p.material} · ₲ ${fmt(p.price)}).`;
+    } else {
+      msg = `Hola Joyería Artesanos (local ${localName}), quisiera consultar por una pieza.`;
+    }
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
     closeLocalPicker();
   }
-  function openLocalPicker(){
+  function openLocalPicker(title, sub){
+    const t = document.querySelector('#ja-pick h3');
+    const s = document.querySelector('#ja-pick .pk-sub');
+    if(t && title) t.textContent = title;
+    if(s && sub) s.textContent = sub;
     document.getElementById('ja-pick').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -367,6 +395,28 @@
         try { openModal(JSON.parse(openBtn.dataset.jaProduct)); } catch(_){}
         return;
       }
+      // Hijack any wa.me link → open local picker for inquiry
+      const waLink = e.target.closest('a[href*="wa.me/"]');
+      if(waLink && !waLink.dataset.jaPassthrough){
+        e.preventDefault();
+        e.stopPropagation();
+        // Product context: from link's data-ja-product, or cart's open modal
+        let prod = null;
+        if(waLink.dataset.jaProduct){
+          try { prod = JSON.parse(waLink.dataset.jaProduct); } catch(_){}
+        }
+        if(!prod){
+          const cartModal = document.getElementById('ja-mback');
+          if(cartModal && cartModal.classList.contains('open') && currentProduct) prod = currentProduct;
+        }
+        if(!prod){
+          const catModal = document.getElementById('modalBack');
+          if(catModal && catModal.classList.contains('open') && window.__jaCurrentCatalogProduct) prod = window.__jaCurrentCatalogProduct;
+        }
+        if(prod) startProductInquiry(prod);
+        else startInquiry();
+        return;
+      }
       // Cart FAB
       if(e.target.closest('#ja-fab')){ e.preventDefault(); openDrawer(); return; }
       // Drawer backdrop or close
@@ -411,6 +461,8 @@
     add: addItem,
     open: openDrawer,
     openProduct: openModal,
+    inquire: startInquiry,
+    inquireProduct: startProductInquiry,
     clear: () => { cart = []; save(cart); renderAll(); },
     get: () => cart.slice(),
     count: totalCount,

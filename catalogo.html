@@ -486,6 +486,7 @@ function openModal(id){
   const p = products.find(x => x.id === id);
   if(!p) return;
   currentModalProduct = p;
+  window.__jaCurrentCatalogProduct = { id:'cat-'+p.id, name:p.name, material:p.material, desc:p.desc, price:p.price, img:p.img };
   const m = document.getElementById('modal');
   m.querySelector('[data-m=img]').src = p.img;
   m.querySelector('[data-m=img]').alt = p.name;
