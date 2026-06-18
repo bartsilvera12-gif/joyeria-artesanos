@@ -374,6 +374,8 @@
     }
   }
   function init(){
+    // Defensive: always clear body overflow on init (could be stuck from prior session)
+    if(document.body && document.body.style.overflow === 'hidden') document.body.style.overflow = '';
     ensureUI();
 
     // Re-inject UI if DCLogic or some other framework wipes the body
