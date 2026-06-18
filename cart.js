@@ -374,9 +374,14 @@
     }
   }
   function init(){
-    // Defensive: always clear body overflow on init (could be stuck from prior session)
+    // Defensive: clear body overflow and close any stuck overlays on init
     if(document.body && document.body.style.overflow === 'hidden') document.body.style.overflow = '';
     ensureUI();
+    // Force close any overlay accidentally left open
+    ['ja-back','ja-drawer','ja-mback','ja-pick'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.classList.remove('open');
+    });
 
     // Re-inject UI if DCLogic or some other framework wipes the body
     new MutationObserver(() => ensureUI()).observe(document.body, { childList:true });

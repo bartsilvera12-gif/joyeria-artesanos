@@ -69,10 +69,10 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 [data-carousel-track] > *{flex:0 0 calc((100% - 18px*3)/4);}
 @media(max-width:1080px){[data-carousel-track] > *{flex:0 0 calc((100% - 18px*2)/3);}}
 @media(max-width:780px){
-  [data-carousel-wrap]{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y;}
+  [data-carousel-wrap]{overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   [data-carousel-wrap]::-webkit-scrollbar{display:none;}
   [data-carousel-track]{transform:none !important;transition:none;}
-  [data-carousel-track] > *{flex:0 0 calc((100% - 18px)/2);scroll-snap-align:start;}
+  [data-carousel-track] > *{flex:0 0 calc((100% - 18px)/2);}
 }
 @media(max-width:520px){[data-carousel-track] > *{flex:0 0 82%;}}
 [data-search]{display:flex;align-items:center;gap:10px;padding:9px 16px;border:1px solid rgba(192,192,192,0.28);border-radius:999px;background:rgba(192,192,192,0.04);min-width:240px;transition:border-color .35s ease,background .35s ease;}
@@ -124,16 +124,19 @@ image-slot::part(ring){border:0 !important;display:none !important;}
   [data-grid-prom]{grid-template-columns:1fr;}
   [data-grid-new]{grid-template-columns:1fr;}
   /* Categorías en mobile: carrusel horizontal scrolleable estilo desktop */
-  [data-grid-cat]{display:flex !important;grid-template-columns:none !important;overflow-x:auto !important;overflow-y:hidden;gap:10px !important;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x pan-y;scroll-snap-type:x proximity;}
+  [data-grid-cat]{display:flex !important;grid-template-columns:none !important;overflow-x:auto !important;overflow-y:visible;gap:10px !important;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
   [data-grid-cat]::-webkit-scrollbar{display:none;}
-  [data-grid-cat] > .ja-cat-card{flex:0 0 calc((100% - 30px) / 4) !important;min-width:0;scroll-snap-align:start;}
+  [data-grid-cat] > .ja-cat-card{flex:0 0 calc((100% - 30px) / 4) !important;min-width:0;}
   header#ja-header{padding:10px 14px !important;gap:10px !important;}
   header#ja-header img{height:48px !important;}
   header#ja-header [data-search]{display:none !important;}
   [data-hero-edit]{padding:84px 18px 50px !important;}
-  /* Sobre nosotros: reset parallax/scale en mobile para evitar overflow y scroll lock */
-  #ja2-arte{top:0 !important;left:0 !important;width:100% !important;height:100% !important;transform:none !important;will-change:auto !important;}
-  #arte > div > div:first-child > div:first-child{aspect-ratio:4/3 !important;}
+  /* Sobre nosotros: forzar dimensiones fijas y sin transformaciones en mobile */
+  #arte image-slot,#ja2-arte{position:absolute !important;top:0 !important;left:0 !important;width:100% !important;height:100% !important;transform:none !important;will-change:auto !important;}
+  #arte > div > div:first-child{margin-bottom:24px;}
+  #arte > div > div:first-child > div:first-child{aspect-ratio:auto !important;height:240px !important;border-radius:18px !important;}
+  /* Asegurar que ningún elemento bloquee el touch del scroll de página */
+  #arte,#arte *{touch-action:auto !important;}
   [data-hero-edit] h1{font-size:30px !important;line-height:1.1 !important;}
   [data-hero-edit] h1 br{display:none;}
   [data-hero-edit] > div > div:nth-of-type(2){font-size:30px !important;}
@@ -566,7 +569,16 @@ class Component extends DCLogic {
     requestAnimationFrame(() => { this._onScroll(); this._revealCheck(); this._parallax(); });
     setTimeout(() => { this._revealCheck(); this._parallax(); }, 80);
     this._autoplayId = setInterval(() => { this.scrollCarousel('+')(); }, 4500);
-    // Bind carousel arrows via delegation (DCLogic onClick currying is unreliable)
+    // Bind carousel arrows: delegation + direct (for reliability across DCLogic re-renders)
+    const bindArrow = (btn) => {
+      if(btn._bound) return;
+      btn._bound = true;
+      btn.onclick = (e) => { e.preventDefault(); this.scrollCarousel(btn.dataset.carouselArrow)(); };
+    };
+    const bindAllArrows = () => document.querySelectorAll('[data-carousel-arrow]').forEach(bindArrow);
+    bindAllArrows();
+    setTimeout(bindAllArrows, 200);
+    setTimeout(bindAllArrows, 800);
     document.addEventListener('click', e => {
       const btn = e.target.closest('[data-carousel-arrow]');
       if(!btn) return;
