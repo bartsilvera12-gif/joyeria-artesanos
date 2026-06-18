@@ -94,6 +94,24 @@
   .ja-toast{position:fixed;bottom:96px;right:22px;z-index:230;padding:12px 18px;background:rgba(11,9,7,.92);border:1px solid rgba(201,162,75,.4);border-radius:999px;color:#f4eee2;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.06em;display:flex;align-items:center;gap:10px;transform:translateY(20px);opacity:0;transition:opacity .3s ease,transform .3s ease;pointer-events:none;}
   .ja-toast.show{opacity:1;transform:translateY(0);}
   .ja-toast svg{color:#f3dca0;}
+
+  /* LOCAL PICKER */
+  .ja-pick{position:fixed;inset:0;z-index:240;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(8,7,5,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;transition:opacity .3s ease;font-family:'Jost',sans-serif;}
+  .ja-pick.open{display:flex;opacity:1;}
+  .ja-pick-card{position:relative;width:100%;max-width:440px;background:#100d09;border:1px solid rgba(201,162,75,.25);border-radius:22px;padding:28px 26px 26px;color:#efe9dd;transform:translateY(20px);transition:transform .35s cubic-bezier(.22,.61,.36,1);box-shadow:0 50px 110px -50px rgba(0,0,0,.95),0 0 60px -30px rgba(201,162,75,.3);}
+  .ja-pick.open .ja-pick-card{transform:translateY(0);}
+  .ja-pick-card .pk-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(11,9,7,.6);border:1px solid rgba(201,162,75,.22);color:#cfc8ba;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .ja-pick-card .pk-x:hover{color:#f3dca0;border-color:rgba(201,162,75,.6);}
+  .ja-pick-card h3{margin:0;font-family:'CommercialScript',cursive;font-weight:400;font-size:30px;color:#f4eee2;line-height:1.1;padding-bottom:.15em;}
+  .ja-pick-card .pk-sub{margin:4px 0 18px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#c9a24b;}
+  .ja-pick-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .ja-pick-opt{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px 16px 18px;border:1px solid rgba(201,162,75,.22);border-radius:16px;background:rgba(20,16,11,.6);color:inherit;font-family:inherit;cursor:pointer;text-align:left;transition:border-color .3s ease,background .3s ease,transform .3s ease;}
+  .ja-pick-opt:hover{border-color:rgba(243,220,160,.6);background:rgba(201,162,75,.08);transform:translateY(-2px);}
+  .ja-pick-opt .pk-lbl{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#928c80;}
+  .ja-pick-opt .pk-nm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;color:#f4eee2;line-height:1.1;}
+  .ja-pick-opt .pk-ph{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#e7c87a;margin-top:4px;}
+  .ja-pick-opt .pk-ph svg{color:#c9a24b;}
+  @media(max-width:520px){.ja-pick-opts{grid-template-columns:1fr;}.ja-pick-card{padding:24px 20px;}.ja-pick-card h3{font-size:26px;}}
   `;
   const style = document.createElement('style');
   style.textContent = css;
@@ -154,6 +172,26 @@
       <div class="ja-toast" id="ja-toast">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
         <span id="ja-toast-msg">Agregado al carrito</span>
+      </div>
+
+      <div class="ja-pick" id="ja-pick" role="dialog" aria-modal="true">
+        <div class="ja-pick-card">
+          <button class="pk-x" id="ja-pick-close" aria-label="Cerrar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          <h3>Elegí tu local</h3>
+          <div class="pk-sub">¿A qué sucursal enviamos tu pedido?</div>
+          <div class="ja-pick-opts">
+            <button class="ja-pick-opt" type="button" data-local="mp">
+              <span class="pk-lbl">Local Multiplaza</span>
+              <span class="pk-nm">Multiplaza</span>
+              <span class="pk-ph"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5Z"/></svg>0974 702 574</span>
+            </button>
+            <button class="ja-pick-opt" type="button" data-local="sl">
+              <span class="pk-lbl">Local San Lorenzo</span>
+              <span class="pk-nm">San Lorenzo</span>
+              <span class="pk-ph"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5Z"/></svg>0974 702 576</span>
+            </button>
+          </div>
+        </div>
       </div>
     `);
   }
@@ -235,10 +273,24 @@
   }
   function checkout(){
     if(!cart.length) return;
+    openLocalPicker();
+  }
+  function sendOrderToLocal(localKey){
     const lines = cart.map(it => `• ${it.name} (${it.material}) x${it.qty} — ₲ ${fmt(it.price*it.qty)}`).join('\n');
     const total = '₲ ' + fmt(totalAmount()) + ' PYG';
-    const msg = `Hola Joyería Artesanos, quiero hacer un pedido:\n\n${lines}\n\nTotal: ${total}`;
-    window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+    const phone = localKey === 'sl' ? WA_SAN_LORENZO : WA_MULTIPLAZA;
+    const localName = localKey === 'sl' ? 'San Lorenzo' : 'Multiplaza';
+    const msg = `Hola Joyería Artesanos (local ${localName}), quiero hacer un pedido:\n\n${lines}\n\nTotal: ${total}`;
+    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+    closeLocalPicker();
+  }
+  function openLocalPicker(){
+    document.getElementById('ja-pick').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLocalPicker(){
+    document.getElementById('ja-pick').classList.remove('open');
+    if(!document.getElementById('ja-drawer').classList.contains('open') && !document.getElementById('ja-mback').classList.contains('open')) document.body.style.overflow = '';
   }
 
   // ============ DRAWER ============
@@ -323,6 +375,11 @@
       // Drawer footer actions
       if(e.target.closest('#ja-checkout')){ checkout(); return; }
       if(e.target.closest('#ja-clear')){ clearCart(); return; }
+      // Local picker
+      if(e.target.closest('#ja-pick-close')){ closeLocalPicker(); return; }
+      if(e.target.id === 'ja-pick'){ closeLocalPicker(); return; }
+      const pickBtn = e.target.closest('.ja-pick-opt[data-local]');
+      if(pickBtn){ sendOrderToLocal(pickBtn.dataset.local); return; }
       // Drawer item actions
       const itemBtn = e.target.closest('.ja-item button[data-act]');
       if(itemBtn){
@@ -345,7 +402,7 @@
     }, true);
 
     document.addEventListener('keydown', e => {
-      if(e.key === 'Escape'){ closeDrawer(); closeModal(); }
+      if(e.key === 'Escape'){ closeDrawer(); closeModal(); closeLocalPicker(); }
     });
   }
 
