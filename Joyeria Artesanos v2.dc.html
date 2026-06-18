@@ -118,17 +118,16 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 @media(max-width:560px){
   [data-grid-prom]{grid-template-columns:1fr;}
   [data-grid-new]{grid-template-columns:1fr;}
-  /* Categorías en mobile: 2 columnas compactas con thumb circular + texto */
-  [data-grid-cat]{grid-template-columns:repeat(2,1fr) !important;gap:8px !important;}
-  .ja-cat-card{flex-direction:row !important;align-items:center;text-align:left;padding:10px 14px;border-radius:14px;}
-  .ja-cat-card::before{display:none;}
-  .ja-cat-card > div{aspect-ratio:auto !important;width:60px !important;height:60px !important;flex-shrink:0;border-radius:50%;}
+  /* Categorías en mobile: círculos en fila horizontal, nombre debajo */
+  [data-grid-cat]{grid-template-columns:repeat(4,1fr) !important;gap:10px !important;}
+  .ja-cat-card{padding:8px 4px 10px;border:0 !important;background:transparent !important;}
+  .ja-cat-card::before,.ja-cat-card::after{display:none !important;}
+  .ja-cat-card > div{aspect-ratio:1/1 !important;width:64px !important;height:64px !important;margin:0 auto;border-radius:50%;border:1px solid rgba(192,192,192,0.3);overflow:hidden;flex-shrink:0;}
   .ja-cat-card > div > div[style*="linear-gradient(180deg,transparent"]{display:none !important;}
   .ja-cat-card > div > span[style*="border-top"]{display:none !important;}
-  .ja-cat-card > div > div[style*="bottom:14px"]{position:static !important;transform:none !important;flex:1;margin-left:14px;flex-direction:row !important;justify-content:space-between;align-items:center;width:calc(100% - 74px);}
-  .ja-cat-card > div > div[style*="bottom:14px"] h3{font-size:17px !important;text-shadow:none !important;color:#f4eee2 !important;}
-  .ja-cat-card > div > div[style*="bottom:14px"] span[style*="display:inline-flex"]{font-size:10.5px !important;}
-  .ja-cat-card > div > div[style*="bottom:14px"] span[style*="display:inline-flex"] span{display:none !important;}
+  .ja-cat-card > div > div[style*="bottom:14px"]{position:absolute !important;left:50% !important;transform:translateX(-50%) !important;bottom:-30px !important;width:100% !important;text-align:center;flex-direction:column !important;gap:2px !important;}
+  .ja-cat-card > div > div[style*="bottom:14px"] h3{font-size:13px !important;text-shadow:none !important;color:#f4eee2 !important;line-height:1.2;}
+  .ja-cat-card > div > div[style*="bottom:14px"] span[style*="display:inline-flex"]{display:none !important;}
   header#ja-header{padding:10px 14px !important;gap:10px !important;}
   header#ja-header img{height:48px !important;}
   header#ja-header [data-search]{display:none !important;}
