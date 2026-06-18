@@ -82,6 +82,9 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 @media(max-width:1080px){[data-grid-cat]{grid-template-columns:repeat(4,1fr);}[data-grid-new]{grid-template-columns:repeat(3,1fr);}[data-coll-grid]{grid-template-columns:repeat(2,1fr) !important;}}
 @media(max-width:560px){[data-coll-grid]{grid-template-columns:1fr !important;}}
 @media(max-width:900px){
+  [data-amedida-text]{max-width:100% !important;position:relative !important;}
+  [data-amedida-card] > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  [data-amedida-card]{min-height:380px;}
   [data-dnav]{display:none !important;}
   [data-menu-btn]{display:inline-flex !important;}
   [data-mnav]{display:flex !important;}
@@ -187,9 +190,8 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 
   <!-- ===================== HERO (boutique editorial) ===================== -->
   <section id="inicio" style="position:relative;min-height:clamp(640px,88vh,860px);display:flex;align-items:center;padding:0;overflow:hidden;background:#08070a;">
-    <div data-hero-bg style="position:absolute;top:0;right:0;bottom:0;width:52%;background:url('./uploads/fondo2.png') center bottom/contain no-repeat;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 22%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 22%,#000 100%);"></div>
+    <div data-hero-bg style="position:absolute;top:0;right:0;bottom:0;width:52%;background:url('./uploads/fondo2.png') center bottom/contain no-repeat;-webkit-mask-image:radial-gradient(ellipse 70% 70% at 60% 55%,#000 35%,rgba(0,0,0,0.7) 60%,transparent 95%),linear-gradient(180deg,transparent 0%,#000 22%,#000 100%);-webkit-mask-composite:source-in;mask-image:radial-gradient(ellipse 70% 70% at 60% 55%,#000 35%,rgba(0,0,0,0.7) 60%,transparent 95%),linear-gradient(180deg,transparent 0%,#000 22%,#000 100%);mask-composite:intersect;"></div>
     <div data-hero-bg-fade style="position:absolute;inset:0;background:linear-gradient(90deg,#08070a 0%,#08070a 40%,rgba(8,7,10,0.55) 58%,rgba(8,7,10,0.15) 78%,transparent 100%);pointer-events:none;"></div>
-    <div aria-hidden="true" style="position:absolute;top:0;right:0;width:52%;height:30%;background:linear-gradient(180deg,#08070a 0%,rgba(8,7,10,0.85) 35%,rgba(8,7,10,0.4) 70%,transparent 100%);pointer-events:none;z-index:1;"></div>
     <div style="position:absolute;inset:0;background:radial-gradient(55% 50% at 18% 28%,rgba(192,192,192,0.1),transparent 65%),radial-gradient(50% 55% at 86% 72%,rgba(192,192,192,0.08),transparent 65%);pointer-events:none;"></div>
 
 
@@ -340,19 +342,17 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 
   <!-- ===================== BANNER A MEDIDA ===================== -->
   <section style="position:relative;padding:0 clamp(20px,5vw,72px) clamp(50px,6vw,80px);max-width:1280px;margin:0 auto;">
-    <div data-reveal data-delay="0" style="opacity:0;transform:translateY(24px);transition:opacity 1s cubic-bezier(.22,.61,.36,1),transform 1s cubic-bezier(.22,.61,.36,1);position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:0;border-radius:32px;overflow:hidden;border:1px solid rgba(192,192,192,0.2);background:linear-gradient(120deg,#13100b 0%,#1a140c 100%);">
-      <div style="padding:clamp(34px,4.5vw,60px);display:flex;flex-direction:column;justify-content:center;gap:18px;">
+    <div data-amedida-card data-reveal data-delay="0" style="opacity:0;transform:translateY(24px);transition:opacity 1s cubic-bezier(.22,.61,.36,1),transform 1s cubic-bezier(.22,.61,.36,1);position:relative;overflow:hidden;">
+      <img src="./uploads/diseña.png" alt="" style="display:block;width:106%;height:auto;margin:-3%;">
+      <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,7,5,0.55) 0%,rgba(8,7,5,0.35) 40%,rgba(8,7,5,0.1) 70%,transparent 100%);pointer-events:none;"></div>
+      <div data-amedida-text style="position:absolute;inset:0;padding:clamp(34px,4.5vw,60px);display:flex;flex-direction:column;justify-content:center;gap:18px;max-width:60%;">
         <span style="font-size:11px;letter-spacing:.36em;text-transform:uppercase;color:#c0c0c0;">A medida</span>
         <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(28px,3.8vw,46px);line-height:1.05;color:#f4eee2;">Diseñá tu <span style="font-family:'CommercialScript',cursive;background:linear-gradient(180deg,#f3dca0,#c9a24b);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:1.25em;">joya única</span></h2>
-        <p style="margin:0;max-width:440px;font-size:14.5px;line-height:1.65;color:#b3ac9f;">Te acompañamos desde el boceto hasta la pieza final. Materiales nobles, oficio artesanal y tu historia hecha joya.</p>
+        <p style="margin:0;max-width:440px;font-size:14.5px;line-height:1.65;color:#cfc8ba;">Te acompañamos desde el boceto hasta la pieza final. Materiales nobles, oficio artesanal y tu historia hecha joya.</p>
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;">
           <a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border-radius:999px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#0c0a06;background:linear-gradient(120deg,#f3dca0,#c9a24b 55%,#a17e38);transition:transform .35s ease;" style-hover="transform:translateY(-2px);">Empezar diseño</a>
-          <a href="#arte" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#d7d7d7;padding:12px 0;">Ver proceso<svg width="14" height="8" viewBox="0 0 24 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h21M16 1l6 6-6 6"/></svg></a>
+          <a href="#arte" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#f4eee2;padding:12px 0;">Ver proceso<svg width="14" height="8" viewBox="0 0 24 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h21M16 1l6 6-6 6"/></svg></a>
         </div>
-      </div>
-      <div style="position:relative;min-height:280px;overflow:hidden;">
-        <image-slot id="ja2-custom" shape="rect" fit="cover" src="{{ arteImg }}" placeholder="Diseño a medida" style="position:absolute;inset:0;width:100%;height:100%;"></image-slot>
-        <div style="position:absolute;inset:0;background:linear-gradient(90deg,#13100b 0%,transparent 40%);"></div>
       </div>
     </div>
   </section>
@@ -700,7 +700,7 @@ class Component extends DCLogic {
       scrollCarousel: this.scrollCarousel,
       mnavTransform: open ? 'translateY(0)' : 'translateY(-105%)',
       mnavOpacity: open ? '1' : '0',
-      arteImg: './uploads/sobrenosotros.png',
+      arteImg: './uploads/diseña.png',
       arteImg2: './uploads/sobrenosotros.png',
       heroStats, collections, bestsellers, featured, craftPoints, experiences, socials,
       year: new Date().getFullYear(),
