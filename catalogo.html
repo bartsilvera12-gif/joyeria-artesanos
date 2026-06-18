@@ -365,7 +365,16 @@ footer .bottom a{color:#c0c0c0;}
     <div class="col">
       <h4>Contacto</h4>
       <a href="mailto:artesanosplantabaja@gmail.com">artesanosplantabaja@gmail.com</a>
-      <a href="#" target="_blank" rel="noopener">WhatsApp</a>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">
+        <a href="https://wa.me/595974702574?text=Hola%20Joyer%C3%ADa%20Artesanos%2C%20quisiera%20consultar%20por%20una%20pieza." target="_blank" rel="noopener" style="display:flex !important;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid rgba(192,192,192,0.18);border-radius:10px;">
+          <span style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:#c0c0c0;">Local Multiplaza</span>
+          <span style="color:#e7c87a;font-size:13px;">📱 0974 702 574</span>
+        </a>
+        <a href="https://wa.me/595974702576?text=Hola%20Joyer%C3%ADa%20Artesanos%2C%20quisiera%20consultar%20por%20una%20pieza." target="_blank" rel="noopener" style="display:flex !important;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid rgba(192,192,192,0.18);border-radius:10px;">
+          <span style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:#c0c0c0;">Local San Lorenzo</span>
+          <span style="color:#e7c87a;font-size:13px;">📱 0974 702 576</span>
+        </a>
+      </div>
     </div>
   </div>
   <div class="bottom">
@@ -375,7 +384,9 @@ footer .bottom a{color:#c0c0c0;}
 </footer>
 
 <script>
-const WA = 'https://wa.me/5491100000000?text=' + encodeURIComponent('Hola Joyería Artesanos, quisiera consultar por una pieza.');
+const WA_MP = '595974702574'; // Multiplaza
+const WA_SL = '595974702576'; // San Lorenzo
+const WA = 'https://wa.me/' + WA_MP + '?text=' + encodeURIComponent('Hola Joyería Artesanos, quisiera consultar por una pieza.');
 document.querySelectorAll('a.wa,a[href="#"]').forEach(a => { if(a.textContent.match(/whats|consultar/i) || a.classList.contains('wa')) a.href = WA; });
 document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -486,7 +497,7 @@ function openModal(id){
   m.querySelector('[data-m=name]').textContent = p.name;
   m.querySelector('[data-m=desc]').textContent = p.desc || '';
   m.querySelector('[data-m=price]').innerHTML = '₲ ' + fmtPrice(p.price) + '<small>PYG</small>';
-  m.querySelector('[data-m=wa]').href = 'https://wa.me/5491100000000?text=' + encodeURIComponent('Hola Joyería Artesanos, quisiera consultar por la pieza "' + p.name + '" (' + p.material + ' · ₲ ' + fmtPrice(p.price) + ').');
+  m.querySelector('[data-m=wa]').href = 'https://wa.me/' + WA_MP + '?text=' + encodeURIComponent('Hola Joyería Artesanos, quisiera consultar por la pieza "' + p.name + '" (' + p.material + ' · ₲ ' + fmtPrice(p.price) + ').');
   document.getElementById('modalBack').classList.add('open');
   document.body.style.overflow = 'hidden';
 }

@@ -117,16 +117,10 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 @media(max-width:560px){
   [data-grid-prom]{grid-template-columns:1fr;}
   [data-grid-new]{grid-template-columns:1fr;}
-  /* Categorías en mobile: círculos en fila horizontal, nombre debajo */
-  [data-grid-cat]{grid-template-columns:repeat(4,1fr) !important;gap:10px !important;}
-  .ja-cat-card{padding:8px 4px 10px;border:0 !important;background:transparent !important;}
-  .ja-cat-card::before,.ja-cat-card::after{display:none !important;}
-  .ja-cat-card > div{aspect-ratio:1/1 !important;width:64px !important;height:64px !important;margin:0 auto;border-radius:50%;border:1px solid rgba(192,192,192,0.3);overflow:hidden;flex-shrink:0;}
-  .ja-cat-card > div > div[style*="linear-gradient(180deg,transparent"]{display:none !important;}
-  .ja-cat-card > div > span[style*="border-top"]{display:none !important;}
-  .ja-cat-card > div > div[style*="bottom:14px"]{position:absolute !important;left:50% !important;transform:translateX(-50%) !important;bottom:-30px !important;width:100% !important;text-align:center;flex-direction:column !important;gap:2px !important;}
-  .ja-cat-card > div > div[style*="bottom:14px"] h3{font-size:13px !important;text-shadow:none !important;color:#f4eee2 !important;line-height:1.2;}
-  .ja-cat-card > div > div[style*="bottom:14px"] span[style*="display:inline-flex"]{display:none !important;}
+  /* Categorías en mobile: carrusel horizontal scrolleable estilo desktop */
+  [data-grid-cat]{display:flex !important;grid-template-columns:none !important;overflow-x:auto !important;overflow-y:hidden;gap:10px !important;padding-bottom:8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  [data-grid-cat]::-webkit-scrollbar{display:none;}
+  [data-grid-cat] > .ja-cat-card{flex:0 0 calc((100% - 30px) / 4) !important;min-width:0;scroll-snap-align:start;}
   header#ja-header{padding:10px 14px !important;gap:10px !important;}
   header#ja-header img{height:48px !important;}
   header#ja-header [data-search]{display:none !important;}
@@ -145,7 +139,7 @@ image-slot::part(ring){border:0 !important;display:none !important;}
   footer div[style*="margin:18px auto 0"]{flex-direction:column;align-items:flex-start !important;gap:6px !important;text-align:left;}
 }
 @media(max-width:400px){
-  [data-grid-cat]{grid-template-columns:1fr !important;}
+  [data-grid-cat] > .ja-cat-card{flex:0 0 calc((100% - 30px) / 3.5) !important;}
   [data-hero-edit] h1{font-size:26px !important;}
   [data-hero-edit] > div > div:nth-of-type(2){font-size:26px !important;}
   header#ja-header img{height:42px !important;}
@@ -490,9 +484,18 @@ image-slot::part(ring){border:0 !important;display:none !important;}
       </div>
       <div>
         <h4 style="margin:0 0 10px;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:#c0c0c0;font-weight:500;">Contacto</h4>
-        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#a39d90;">
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#a39d90;">
           <a href="mailto:artesanosplantabaja@gmail.com" style="transition:color .3s ease;" style-hover="color:#d7d7d7;">artesanosplantabaja@gmail.com</a>
-          <a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;transition:color .3s ease;" style-hover="color:#d7d7d7;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5Z"/></svg>WhatsApp</a>
+          <div style="margin-top:4px;display:flex;flex-direction:column;gap:8px;">
+            <a href="{{ waLinkMP }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid rgba(192,192,192,0.18);border-radius:10px;transition:border-color .3s ease,background .3s ease;" style-hover="border-color:rgba(243,220,160,.4);background:rgba(201,162,75,.06);">
+              <span style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:#c0c0c0;">Local Multiplaza</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;color:#e7c87a;font-size:13.5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5Z"/></svg>0974 702 574</span>
+            </a>
+            <a href="{{ waLinkSL }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid rgba(192,192,192,0.18);border-radius:10px;transition:border-color .3s ease,background .3s ease;" style-hover="border-color:rgba(243,220,160,.4);background:rgba(201,162,75,.06);">
+              <span style="font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:#c0c0c0;">Local San Lorenzo</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;color:#e7c87a;font-size:13.5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.4L3 21l2.2-5.2A8.5 8.5 0 1 1 21 11.5Z"/></svg>0974 702 576</span>
+            </a>
+          </div>
         </div>
       </div>
       <div>
@@ -647,8 +650,12 @@ class Component extends DCLogic {
   }
 
   renderVals(){
-    const phone = ((this.props.whatsapp || '5491100000000').replace(/[^0-9]/g,'')) || '5491100000000';
-    const waLink = 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Hola Joyería Artesanos, quisiera consultar por una pieza.');
+    const phoneMP = '595974702574'; // Multiplaza
+    const phoneSL = '595974702576'; // San Lorenzo
+    const waText = encodeURIComponent('Hola Joyería Artesanos, quisiera consultar por una pieza.');
+    const waLink = 'https://wa.me/' + phoneMP + '?text=' + waText;
+    const waLinkMP = 'https://wa.me/' + phoneMP + '?text=' + waText;
+    const waLinkSL = 'https://wa.me/' + phoneSL + '?text=' + waText;
     const open = this.state.menuOpen;
     const heroStats = [
       { n:'+15', l:'Años de oficio' },
@@ -709,7 +716,7 @@ class Component extends DCLogic {
     ];
 
     return {
-      navItems: this.navItems, waLink,
+      navItems: this.navItems, waLink, waLinkMP, waLinkSL,
       toggleMenu: this.toggleMenu, closeMenu: this.closeMenu,
       scrollCarousel: this.scrollCarousel,
       mnavTransform: open ? 'translateY(0)' : 'translateY(-105%)',

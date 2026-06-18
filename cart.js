@@ -1,6 +1,8 @@
 (function(){
   const STORAGE_KEY = 'ja-cart-v1';
-  const WA_NUMBER = '5491100000000';
+  const WA_MULTIPLAZA = '595974702574';
+  const WA_SAN_LORENZO = '595974702576';
+  const WA_NUMBER = WA_MULTIPLAZA; // default for product modals
   const fmt = n => new Intl.NumberFormat('es-PY').format(n);
 
   // ============ STATE ============
