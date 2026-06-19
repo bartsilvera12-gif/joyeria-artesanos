@@ -45,6 +45,8 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 @keyframes ja-divLineL{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
 @keyframes ja-divLineR{0%,100%{background-position:100% 50%;}50%{background-position:0% 50%;}}
 @keyframes ja-best-sheen{0%{transform:translateX(0);}55%,100%{transform:translateX(380%);}}
+@keyframes ja-gem-glow{0%{opacity:0;transform:translate(-50%,-50%) scale(.35);}35%{opacity:1;transform:translate(-50%,-50%) scale(1.05);}70%{opacity:.85;transform:translate(-50%,-50%) scale(1.15);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.3);}}
+@keyframes ja-gem-spike{0%{opacity:0;transform:translate(-50%,-50%) scaleX(.1) scaleY(1);}35%{opacity:1;transform:translate(-50%,-50%) scale(1);}70%{opacity:.6;transform:translate(-50%,-50%) scale(1.05);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.15);}}
 @keyframes ja-glow-pulse{0%,100%{opacity:.85;}50%{opacity:1;}}
 .ja-best-section .ja-glow-bg{animation:ja-glow-pulse 5s ease-in-out infinite;}
 .ja-best-section article{position:relative;overflow:hidden;z-index:2;background:#100d09;}
@@ -111,6 +113,14 @@ image-slot::part(ring){border:0 !important;display:none !important;}
   [data-hero-divider]{display:none !important;}
 }
 @media(max-width:560px){[data-hero-bust]{display:none !important;}}
+[data-hero-sparkle]{position:absolute;pointer-events:none;z-index:3;left:75%;bottom:30%;width:90px;height:90px;mix-blend-mode:screen;}
+[data-hero-sparkle] .gem-core{position:absolute;top:50%;left:50%;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(255,236,180,0.7) 22%,rgba(255,236,180,0.18) 45%,transparent 70%);filter:blur(1.5px);opacity:0;transform:translate(-50%,-50%) scale(.35);animation:ja-gem-glow 2.4s cubic-bezier(.22,.61,.36,1) 1.1s 1 both;}
+[data-hero-sparkle] .gem-h,[data-hero-sparkle] .gem-v{position:absolute;top:50%;left:50%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.95) 45%,rgba(255,255,255,0.95) 55%,transparent);opacity:0;animation:ja-gem-spike 1.8s cubic-bezier(.22,.61,.36,1) 1.35s 1 both;}
+[data-hero-sparkle] .gem-h{width:78px;height:2px;transform:translate(-50%,-50%);}
+[data-hero-sparkle] .gem-v{width:2px;height:78px;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.95) 45%,rgba(255,255,255,0.95) 55%,transparent);transform:translate(-50%,-50%);}
+@media(max-width:900px){[data-hero-sparkle]{left:50%;bottom:22%;}}
+@media(max-width:560px){[data-hero-sparkle]{left:50%;bottom:12%;width:70px;height:70px;}[data-hero-sparkle] .gem-core{width:62px;height:62px;}[data-hero-sparkle] .gem-h{width:60px;}[data-hero-sparkle] .gem-v{height:60px;}}
+@media(prefers-reduced-motion:reduce){[data-hero-sparkle]{display:none;}}
 @media(max-width:720px){
   #inicio{align-items:flex-start !important;min-height:auto !important;}
   [data-hero-edit]{padding-top:96px !important;padding-bottom:50px !important;padding-left:22px !important;padding-right:22px !important;}
@@ -212,6 +222,7 @@ image-slot::part(ring){border:0 !important;display:none !important;}
     <div data-hero-bg style="position:absolute;top:0;right:0;bottom:0;width:52%;background:url('./uploads/fondo2.png') center bottom/contain no-repeat;-webkit-mask-image:radial-gradient(ellipse 70% 70% at 60% 55%,#000 35%,rgba(0,0,0,0.7) 60%,transparent 95%),linear-gradient(180deg,transparent 0%,#000 22%,#000 100%);-webkit-mask-composite:source-in;mask-image:radial-gradient(ellipse 70% 70% at 60% 55%,#000 35%,rgba(0,0,0,0.7) 60%,transparent 95%),linear-gradient(180deg,transparent 0%,#000 22%,#000 100%);mask-composite:intersect;"></div>
     <div data-hero-bg-fade style="position:absolute;inset:0;background:linear-gradient(90deg,#08070a 0%,#08070a 40%,rgba(8,7,10,0.55) 58%,rgba(8,7,10,0.15) 78%,transparent 100%);pointer-events:none;"></div>
     <div style="position:absolute;inset:0;background:radial-gradient(55% 50% at 18% 28%,rgba(192,192,192,0.1),transparent 65%),radial-gradient(50% 55% at 86% 72%,rgba(192,192,192,0.08),transparent 65%);pointer-events:none;"></div>
+    <div data-hero-sparkle aria-hidden="true"><span class="gem-core"></span><span class="gem-h"></span><span class="gem-v"></span></div>
 
 
     <div data-hero-edit style="position:relative;width:100%;max-width:1320px;margin:0 auto;padding:150px clamp(28px,6vw,80px) 40px;display:flex;flex-direction:column;align-items:flex-start;">
