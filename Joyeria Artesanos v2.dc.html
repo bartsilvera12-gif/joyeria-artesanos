@@ -550,16 +550,25 @@ class Component extends DCLogic {
     return Math.max(0, total - perView);
   };
   scrollCarousel = (dir) => () => {
-    if(window.innerWidth <= 780) return;
     const t = document.getElementById('ja-carousel');
     if(!t) return;
+    const card = t.children[0];
+    if(!card) return;
+    const step = card.getBoundingClientRect().width + 18;
+    if(window.innerWidth <= 780){
+      const wrap = t.parentElement;
+      if(!wrap) return;
+      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      let next = wrap.scrollLeft + (dir === '+' ? step : -step);
+      if(next > maxScroll + 2) next = 0;
+      if(next < 0) next = maxScroll;
+      wrap.scrollTo({ left: next, behavior: 'smooth' });
+      return;
+    }
     const max = this._carouselMax();
     this._carouselIdx = dir === '+'
       ? (this._carouselIdx >= max ? 0 : this._carouselIdx + 1)
       : (this._carouselIdx <= 0 ? max : this._carouselIdx - 1);
-    const card = t.children[0];
-    if(!card) return;
-    const step = card.getBoundingClientRect().width + 18;
     t.style.transform = 'translate3d(' + (-this._carouselIdx * step) + 'px,0,0)';
   };
 
