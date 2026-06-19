@@ -64,14 +64,12 @@ image-slot::part(ring){border:0 !important;display:none !important;}
 [data-grid-prom]{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
 [data-grid-new]{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
 [data-hero-split]{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(30px,5vw,70px);align-items:center;}
-[data-carousel-wrap]{position:relative;overflow:hidden;padding:6px 4px;}
-[data-carousel-track]{display:flex;gap:18px;transition:transform .65s cubic-bezier(.22,.61,.36,1);will-change:transform;}
+[data-carousel-wrap]{position:relative;overflow-x:auto;overflow-y:visible;padding:6px 4px;scrollbar-width:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+[data-carousel-wrap]::-webkit-scrollbar{display:none;}
+[data-carousel-track]{display:flex;gap:18px;}
 [data-carousel-track] > *{flex:0 0 calc((100% - 18px*3)/4);}
 @media(max-width:1080px){[data-carousel-track] > *{flex:0 0 calc((100% - 18px*2)/3);}}
 @media(max-width:780px){
-  [data-carousel-wrap]{overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-  [data-carousel-wrap]::-webkit-scrollbar{display:none;}
-  [data-carousel-track]{transform:none !important;transition:none;}
   [data-carousel-track] > *{flex:0 0 calc((100% - 18px)/2);}
 }
 @media(max-width:520px){[data-carousel-track] > *{flex:0 0 82%;}}
@@ -540,36 +538,19 @@ class Component extends DCLogic {
 
   toggleMenu = () => this.setState(s => ({ menuOpen: !s.menuOpen }));
   closeMenu = () => this.setState({ menuOpen: false });
-  _carouselIdx = 0;
-  _carouselMax = () => {
-    const t = document.getElementById('ja-carousel');
-    if(!t) return 0;
-    const total = t.children.length;
-    const w = window.innerWidth;
-    const perView = w <= 520 ? 1 : w <= 780 ? 2 : w <= 1080 ? 3 : 4;
-    return Math.max(0, total - perView);
-  };
   scrollCarousel = (dir) => () => {
     const t = document.getElementById('ja-carousel');
     if(!t) return;
+    const wrap = t.parentElement;
+    if(!wrap) return;
     const card = t.children[0];
     if(!card) return;
     const step = card.getBoundingClientRect().width + 18;
-    if(window.innerWidth <= 780){
-      const wrap = t.parentElement;
-      if(!wrap) return;
-      const maxScroll = wrap.scrollWidth - wrap.clientWidth;
-      let next = wrap.scrollLeft + (dir === '+' ? step : -step);
-      if(next > maxScroll + 2) next = 0;
-      if(next < 0) next = maxScroll;
-      wrap.scrollTo({ left: next, behavior: 'smooth' });
-      return;
-    }
-    const max = this._carouselMax();
-    this._carouselIdx = dir === '+'
-      ? (this._carouselIdx >= max ? 0 : this._carouselIdx + 1)
-      : (this._carouselIdx <= 0 ? max : this._carouselIdx - 1);
-    t.style.transform = 'translate3d(' + (-this._carouselIdx * step) + 'px,0,0)';
+    const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+    let next = wrap.scrollLeft + (dir === '+' ? step : -step);
+    if(next > maxScroll - 2) next = (dir === '+' && wrap.scrollLeft >= maxScroll - 2) ? 0 : maxScroll;
+    if(next < 0) next = (dir === '-' && wrap.scrollLeft <= 2) ? maxScroll : 0;
+    wrap.scrollTo({ left: next, behavior: 'smooth' });
   };
 
   componentDidMount(){
@@ -579,7 +560,7 @@ class Component extends DCLogic {
     requestAnimationFrame(() => { this._onScroll(); this._revealCheck(); this._parallax(); });
     setTimeout(() => { this._revealCheck(); this._parallax(); }, 80);
     if(window.innerWidth > 780){
-      this._autoplayId = setInterval(() => { this.scrollCarousel('+')(); }, 4500);
+      this._autoplayId = setInterval(() => { this.scrollCarousel('+')(); }, 5000);
     }
     // Bind carousel arrows: delegation + direct (for reliability across DCLogic re-renders)
     const bindArrow = (btn) => {
@@ -610,17 +591,6 @@ class Component extends DCLogic {
   _onResize = () => {
     this._revealCheck();
     this._parallax();
-    if(window.innerWidth <= 780) return;
-    const t = document.getElementById('ja-carousel');
-    if(t){
-      const max = this._carouselMax();
-      if(this._carouselIdx > max) this._carouselIdx = max;
-      const card = t.children[0];
-      if(card){
-        const step = card.getBoundingClientRect().width + 18;
-        t.style.transform = 'translate3d(' + (-this._carouselIdx * step) + 'px,0,0)';
-      }
-    }
   };
 
   _onScroll = () => {
