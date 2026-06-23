@@ -396,8 +396,29 @@ const mnav = document.getElementById('mnav');
 menuBtn?.addEventListener('click', () => mnav.classList.toggle('open'));
 mnav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mnav.classList.remove('open')));
 
-// PRODUCTS — distributed across categories
-const products = [
+// PRODUCTS — fallback hardcoded; on load se reemplaza con data del ERP
+// (joyeriaartesanos.neura.com.py) si el endpoint responde OK.
+const ERP_PRODUCTOS_URL = 'https://joyeriaartesanos.neura.com.py/api/public/joyeria/productos';
+
+function inferCat(nombre){
+  const n = (nombre || '').toLowerCase();
+  if (n.includes('cadena') || n.includes('rosario')) return 'cadenas';
+  if (n.includes('anillo')) return 'anillos';
+  if (n.includes('pulsera')) return 'pulseras';
+  if (n.includes('aro') || n.includes('aros')) return 'aros';
+  if (n.includes('reloj')) return 'relojes';
+  if (n.includes('guampa')) return 'guampas';
+  if (n.includes('bombilla')) return 'bombillas';
+  return 'cadenas';
+}
+function inferMat(marca){
+  const m = (marca || '').toLowerCase();
+  if (m.includes('plata')) return 'plata';
+  if (m.includes('oro') || m.includes('enchap')) return 'oro18k';
+  return 'plata';
+}
+
+let products = [
   // Anillos
   { id:101, cat:'cadenas', name:'Cadena Crucifijo', material:'Plata 925', mat:'plata', img:'./uploads/joyeria artesanosss.jpeg', badge:'Top', price:1850000, desc:'Cadena fina en plata 925 con dije crucifijo. Presentación en estuche.' },
   { id:102, cat:'cadenas', name:'Cadena Medalla', material:'Plata 925', mat:'plata', img:'./uploads/joyeriia artesanos.jpeg', badge:'Top', price:980000, desc:'Cadena en plata 925 con medalla ovalada. Acabado pulido espejo.' },
@@ -614,6 +635,32 @@ window.addEventListener('hashchange', () => {
 
 counts();
 render();
+
+// Hidratar desde el ERP. Si falla, queda el fallback hardcodeado.
+(async () => {
+  try {
+    const res = await fetch(ERP_PRODUCTOS_URL, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) return;
+    const json = await res.json();
+    const list = Array.isArray(json.productos) ? json.productos : [];
+    if (!list.length) return;
+    products = list.map(p => ({
+      id:       p.id,
+      cat:      inferCat(p.nombre),
+      name:     p.nombre,
+      material: p.marca || '',
+      mat:      inferMat(p.marca),
+      img:      p.imagen_url || './uploads/joyeria artesanos.jpeg',
+      badge:    p.destacado ? 'Top' : '',
+      price:    Number(p.precio_oferta || p.precio || 0),
+      desc:     p.descripcion || '',
+    }));
+    counts();
+    render();
+  } catch (err) {
+    console.warn('[catalogo] fallback a productos hardcodeados:', err);
+  }
+})();
 </script>
 </body>
 </html>
