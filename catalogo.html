@@ -646,7 +646,8 @@ render();
     if (!list.length) return;
     products = list.map(p => ({
       id:       p.id,
-      cat:      inferCat(p.nombre),
+      slug:     p.slug || null,
+      cat:      p.categoria || inferCat(p.nombre),
       name:     p.nombre,
       material: p.marca || '',
       mat:      inferMat(p.marca),
