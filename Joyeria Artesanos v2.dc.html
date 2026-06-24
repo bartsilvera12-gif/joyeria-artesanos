@@ -566,6 +566,7 @@ class Component extends DCLogic {
   componentDidMount(){
     window.addEventListener('scroll', this._handleScroll, { passive:true });
     window.addEventListener('resize', this._onResize, { passive:true });
+    this._hidratarDesdeERP();
     this._injectIcons();
     requestAnimationFrame(() => { this._onScroll(); this._revealCheck(); this._parallax(); });
     setTimeout(() => { this._revealCheck(); this._parallax(); }, 80);
@@ -591,6 +592,37 @@ class Component extends DCLogic {
   }
 
   componentDidUpdate(){ this._injectIcons(); }
+
+  // Hidrata bestsellers desde el ERP. Si falla, queda el array hardcodeado.
+  _hidratarDesdeERP = async () => {
+    const ERP_PRODUCTOS_URL = 'https://joyeriaartesanos.neura.com.py/api/public/joyeria/productos';
+    try {
+      const res = await fetch(ERP_PRODUCTOS_URL, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) return;
+      const json = await res.json();
+      const list = Array.isArray(json.productos) ? json.productos : [];
+      if (!list.length) return;
+      const bestsellers = list.slice(0, 7).map((p, i) => ({
+        id: 'erp-' + p.id,
+        name: p.nombre,
+        material: p.marca || '',
+        desc: p.descripcion || '',
+        badge: p.destacado ? 'Top' : '',
+        price: Number(p.precio_oferta || p.precio || 0),
+        img: p.imagen_url || './uploads/joyeria artesanos.jpeg',
+        idx: i,
+        slot: 'ja2-best-' + i,
+        priceFmt: new Intl.NumberFormat('es-PY').format(Number(p.precio_oferta || p.precio || 0)),
+      }));
+      bestsellers.forEach((b, i) => {
+        b.dataAttr = JSON.stringify({ id: b.id, name: b.name, material: b.material, desc: b.desc, price: b.price, img: b.img });
+      });
+      this._erpBestsellers = bestsellers;
+      this.forceUpdate();
+    } catch (err) {
+      console.warn('[home] fallback a bestsellers hardcodeados:', err);
+    }
+  };
 
   _ticking = false;
   _handleScroll = () => {
@@ -693,7 +725,7 @@ class Component extends DCLogic {
       { id:'bombillas', name:'Bombillas', count:'14 piezas', img:'./uploads/bombilla.png' },
     ].map((c,i)=>({ ...c, idx:i, slot:'ja2-col-'+c.id, href:'./catalogo.html#'+c.id }));
 
-    const bestsellers = [
+    const bestsellersFallback = [
       { id:'bs1', name:'Cadena Crucifijo', material:'Plata 925', desc:'Cadena fina en plata 925 con dije crucifijo. Presentación en estuche.', badge:'Top', price:1850000, img:'./uploads/joyeria artesanosss.jpeg' },
       { id:'bs2', name:'Cadena Medalla', material:'Plata 925', desc:'Cadena en plata 925 con medalla ovalada. Acabado pulido espejo.', badge:'Top', price:980000, img:'./uploads/joyeriia artesanos.jpeg' },
       { id:'bs3', name:'Cadena Enchapada Oro', material:'Enchapado en oro', desc:'Cadena enchapada en oro con dije de ángel. Brillo cálido y duradero.', badge:'Top', price:240000, img:'./uploads/precio 240.000gs.jpeg' },
@@ -708,6 +740,7 @@ class Component extends DCLogic {
       priceFmt: new Intl.NumberFormat('es-PY').format(b.price),
       dataAttr: JSON.stringify({ id:b.id, name:b.name, material:b.material, desc:b.desc, price:b.price, img:b.img })
     }));
+    const bestsellers = (this._erpBestsellers && this._erpBestsellers.length) ? this._erpBestsellers : bestsellersFallback;
 
     const featured = [
       { name:'Oro 18k', material:'Material noble', tag:'Clásico', desc:'Calidez inconfundible, brillo eterno. La elección por excelencia para piezas que duran toda la vida.', img:'./uploads/oro.png', link:'./catalogo.html?mat=oro18k' },
