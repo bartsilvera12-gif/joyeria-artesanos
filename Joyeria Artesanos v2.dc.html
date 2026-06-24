@@ -623,7 +623,7 @@ class Component extends DCLogic {
       const destacados = list.filter(p => p && p.destacado === true);
       if (!destacados.length) return;
 
-      const bestsellers = destacados.slice(0, 7).map((p, i) => {
+      const bestsellers = destacados.slice(0, 24).map((p, i) => {
         const fallbackImg = IMG_POR_NOMBRE[norm(p.nombre)] || FALLBACK_IMG;
         return {
           id: 'erp-' + p.id,
